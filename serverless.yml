@@ -1,0 +1,79 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: cjbdev
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: recipe-app-service-test
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: recipe-app-service-test
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+
+  environment:
+    TABLE_USER: ${env:TABLE_USER}
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1'
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:PutItem # CREATE
+        - dynamodb:GetItem # READ: Get one
+        - dynamodb:Scan # READ: List all
+        - dynamodb:Query # READ: Filter
+      Resource:
+        - arn:aws:dynamodb:${self:provider.region}:*:table/${env:TABLE_USER}
+
+plugins:
+  - serverless-offline
+
+functions:
+  testHttp:
+    description: 'testHttp'
+    handler: dist/testHttp.testPost
+    events:
+      - http:
+          method: post
+          path: /test
+          cors: true
+
+  register:
+    description: 'register'
+    handler: dist/handlers/userHandler.register
+    events:
+      - http:
+          method: post
+          path: /register
+          cors: true
+
+resources:
+  Resources:
+    DynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${env:TABLE_USER}
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST #NOTE: "PAY_PER_REQUEST"
+
+#NOTE:
+# PAY_PER_REQUEST: En este modo solo pagas por el uso real
+# ProvisionedThroughput:
+#   ReadCapacityUnits: 5
+#   WriteCapacityUnits: 5
+#
+# `ProvisionedThroughput` define cuántas operaciones de lectura y escritura puedes realizar por segundo.
+# ReadCapacityUnits y WriteCapacityUnits determinan la cantidad fija de operaciones que puedes realizar
+# por segundo. Si superas esta capacidad, las solicitudes adicionales se rechazarán con un error de
+# `ProvisionedThroughputExceededException`.
+#
+# Esta opción es ideal para aplicaciones con cargas predecibles y constantes.
+#
+# Para evitar gestionar manualmente la capacidad o incurrir en gastos innecesarios en entornos de prueba,
+# es recomendable usar `BillingMode: PAY_PER_REQUEST`, que ajusta automáticamente la capacidad según el uso
+# y solo pagas por las lecturas/escrituras que realizas.

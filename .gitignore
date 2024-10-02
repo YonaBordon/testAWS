@@ -1,0 +1,8 @@
+node_modules
+.serverless
+
+# dist
+dist
+
+# variables de entorno
+.env
