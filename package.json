@@ -1,9 +1,15 @@
 {
+  "scripts": {
+    "build": "tsc",
+    "deploy": "npm run build && serverless deploy",
+    "offline": "npm run build && serverless offline"
+  },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.145",
     "@types/node": "^22.7.4",
     "@types/uuid": "^10.0.0",
     "serverless": "^4.4.4",
+    "serverless-dotenv-plugin": "^6.0.0",
     "serverless-offline": "^14.3.2"
   },
   "dependencies": {
@@ -11,5 +17,10 @@
     "aws-sdk": "^2.1691.0",
     "bcryptjs": "^2.4.3",
     "uuid": "^10.0.0"
+  },
+  "overrides": {
+    "serverless-dotenv-plugin": {
+      "serverless": "$serverless"
+    }
   }
 }

@@ -1,0 +1,17 @@
+register:
+  description: 'Register a new user'
+  handler: dist/handlers/user/userHandler.register
+  events:
+    - http:
+        method: POST
+        path: /register
+        cors: true
+
+login:
+  description: 'Login a user'
+  handler: dist/handlers/user/userHandler.login
+  events:
+    - http:
+        method: POST
+        path: /login
+        cors: true

@@ -12,6 +12,8 @@ provider:
   stage: ${opt:stage, 'dev'}
 
   environment:
+    USER_POOL_ID: ${env:USER_POOL_ID}
+    CLIENT_ID: ${env:CLIENT_ID}
     TABLE_USER: ${env:TABLE_USER}
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1'
 
@@ -27,25 +29,9 @@ provider:
 
 plugins:
   - serverless-offline
+  - serverless-dotenv-plugin
 
-functions:
-  testHttp:
-    description: 'testHttp'
-    handler: dist/testHttp.testPost
-    events:
-      - http:
-          method: post
-          path: /test
-          cors: true
-
-  register:
-    description: 'register'
-    handler: dist/handlers/userHandler.register
-    events:
-      - http:
-          method: post
-          path: /register
-          cors: true
+functions: ${file(./src/handlers/user/serverless.function.yml)}
 
 resources:
   Resources:
