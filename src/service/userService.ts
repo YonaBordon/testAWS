@@ -18,7 +18,6 @@ export const registerUser = async (data: {
 	try {
 		console.log(CLIENT_ID);
 		const params = {
-			
 			ClientId: CLIENT_ID, // ID del cliente de la aplicación (Cognito)
 			Username: email,
 			Password: password,
@@ -93,3 +92,13 @@ export const loginUser = async (email: string, password: string) => {
 		}
 	}
 };
+
+// TODO: ver el de actualizacion luego
+
+// NOTE:
+// ACCESS TOKEN: Este token contiene los permisos (scopes) y roles asociados al usuario y se utiliza 
+// para autorizar solicitudes a los servicios protegidos por Cognito.
+// ID TOKEN: Este token contiene información sobre la identidad del usuario, como su nombre, correo 
+// electrónico, y otros atributos personalizados que hayas configurado en Cognito.
+// REFRESH TOKEN: Este token se utiliza para obtener nuevos Access Tokens e ID Tokens sin que el 
+// usuario tenga que iniciar sesión de nuevo.

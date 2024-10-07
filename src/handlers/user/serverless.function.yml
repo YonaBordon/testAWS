@@ -1,6 +1,6 @@
 register:
   description: 'Register a new user'
-  handler: dist/handlers/user/userHandler.register
+  handler: dist/handlers/user/registerUserHandler.register
   events:
     - http:
         method: POST
@@ -9,7 +9,7 @@ register:
 
 login:
   description: 'Login a user'
-  handler: dist/handlers/user/userHandler.login
+  handler: dist/handlers/user/loginUserHandler.login
   events:
     - http:
         method: POST
