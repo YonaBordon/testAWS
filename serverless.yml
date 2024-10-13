@@ -14,10 +14,19 @@ provider:
   environment:
     USER_POOL_ID: ${env:USER_POOL_ID}
     CLIENT_ID: ${env:CLIENT_ID}
+    BUCKET_NAME: ${env:BUCKET_NAME}
     TABLE_USER: ${env:TABLE_USER}
+    TABLE_RECIPE: ${env:TABLE_RECIPE}
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1'
 
   iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+        - s3:DeleteObject
+      Resource:
+        - arn:aws:s3:::${env:BUCKET_NAME}/*
     - Effect: Allow
       Action:
         - dynamodb:PutItem # CREATE
@@ -26,15 +35,24 @@ provider:
         - dynamodb:Query # READ: Filter
       Resource:
         - arn:aws:dynamodb:${self:provider.region}:*:table/${env:TABLE_USER}
+        - arn:aws:dynamodb:${self:provider.region}:*:table/${env:TABLE_RECIPE}
 
 plugins:
   - serverless-offline
   - serverless-dotenv-plugin
 
-functions: ${file(./src/handlers/user/serverless.function.yml)}
+functions:
+  - ${file(./src/handlers/user/serverless.function.yml)}
+  - ${file(./src/handlers/recipe/serverless.function.yml)}
 
 resources:
   Resources:
+    RecipeImagesBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${env.BUCKET_NAME}
+
+    # tablas dynamodb
     DynamoDBTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -47,6 +65,17 @@ resources:
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST #NOTE: "PAY_PER_REQUEST"
 
+    DynamoDBTableRecipe:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${env:TABLE_RECIPE}
+        AttributeDefinitions:
+          - AttributeName: recipeId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: recipeId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
 #NOTE:
 # PAY_PER_REQUEST: En este modo solo pagas por el uso real
 # ProvisionedThroughput:

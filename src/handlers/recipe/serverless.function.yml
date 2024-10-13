@@ -1,0 +1,11 @@
+createRecipe:
+  description: 'Create new recipe'
+  handler: dist/handlers/recipe/createRecipeHandler.createRecipe
+  events:
+    - http:
+        method: POST
+        path: /recipe
+        cors: true
+        authorizer:
+          type: COGNITO_USER_POOLS
+          authorizerId: { Ref: ApiGatewayAuthorizer }

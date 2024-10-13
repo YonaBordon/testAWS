@@ -42,7 +42,7 @@ export const registerUser = async (data: {
 			userId: uuid(),
 			email,
 			name,
-			created_at: new Date().toISOString(),
+			createdAt: new Date().toISOString(),
 		};
 
 		// Almacena la información del usuario en DynamoDB
